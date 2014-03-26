@@ -7,6 +7,9 @@ from setuptools.dist import Distribution
 from importlib import import_module
 
 
+PYTHON3K = sys.version_info[0] > 2
+
+
 class CFFIExtension(object):
     def __init__(self, qualname):
         self._qualname = qualname
@@ -36,11 +39,10 @@ class CFFIExtension(object):
 
 # setuptools DWIM monkey-patch madness
 # http://mail.python.org/pipermail/distutils-sig/2007-September/thread.html#8204 # noqa
-if 'setuptools.extension' in sys.modules:
+if not PYTHON3K and 'setuptools.extension' in sys.modules:
     m = sys.modules['setuptools.extension']
     m.Extension.__dict__ = m._Extension.__dict__
 
-PYTHON3K = sys.version_info[0] > 2
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 vendor_path = os.path.join(cwd, 'vendor')

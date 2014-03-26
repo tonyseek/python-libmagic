@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import threading
-import _magic
+
+from . import _magic
 
 __version__ = '0.0.1'
 
@@ -16,23 +17,21 @@ def open(mime=False, magic_file=None,
         flags |= _magic.MAGIC_MIME_ENCODING
     if keep_going:
         flags |= _magic.MAGIC_CONTINUE
-    m = _magic.open(flags)
-    if magic_file:
-        m.load(magic_file)
-    else:
+
+    if not magic_file:
         path = os.path.realpath(__file__).rsplit('/', 2)[0]
-        path = os.path.join(path, 'misc', 'magic.mgc')
-        m.load(path)
-    return m
+        magic_file = os.path.join(path, 'misc', 'magic.mgc')
+
+    return _magic.Magic(flags, magic_file=magic_file)
 
 
 instances = threading.local()
 
 
 def _get_magic_type(mime):
-    i = instances.__dict__.get(mime)
+    i = vars(instances).get(mime)
     if i is None:
-        i = instances.__dict__[mime] = open(mime=mime)
+        i = vars(instances)[mime] = open(mime=mime)
     return i
 
 
@@ -42,11 +41,11 @@ def from_file(filename, mime=False):
     value is the mimetype if mime=True, otherwise a human readable
     name.
 
-    >>> magic.from_file("testdata/test.pdf", mime=True)
+    >>> from_file("testdata/test.pdf", mime=True)
     'application/pdf'
     """
-    m = _get_magic_type(mime)
-    return m.from_file(filename)
+    with _get_magic_type(mime) as m:
+        return m.from_file(filename)
 
 
 def from_buffer(buffer, mime=False):
@@ -55,8 +54,8 @@ def from_buffer(buffer, mime=False):
     value is the mimetype if mime=True, otherwise a human readable
     name.
 
-    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+    >>> from_buffer(open("testdata/test.pdf").read(1024))
     'PDF document, version 1.2'
     """
-    m = _get_magic_type(mime)
-    return m.from_buffer(buffer)
+    with _get_magic_type(mime) as m:
+        return m.from_buffer(buffer)
