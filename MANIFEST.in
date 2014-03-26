@@ -1,5 +1,3 @@
-include src/*.pyx
-include src/*.pxd
 include tests/*
 include vendor/file-5.17.tar.gz
 include vendor/zlib-1.2.8.tar.gz
