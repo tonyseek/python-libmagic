@@ -20,7 +20,9 @@ def open(mime=False, magic_file=None,
 
     if not magic_file:
         path = os.path.realpath(__file__).rsplit('/', 2)[0]
-        magic_file = os.path.join(path, 'misc', 'magic.mgc')
+        path = os.path.join(path, 'misc', 'magic.mgc')
+        if os.path.exists(path):
+            magic_file = path
 
     return _magic.Magic(flags, magic_file=magic_file)
 
