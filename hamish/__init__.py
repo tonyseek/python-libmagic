@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 import os
+import sys
 import threading
 
 from . import _magic
@@ -19,8 +19,7 @@ def open(mime=False, magic_file=None,
         flags |= _magic.MAGIC_CONTINUE
 
     if not magic_file:
-        path = os.path.realpath(__file__).rsplit('/', 2)[0]
-        path = os.path.join(path, 'misc', 'magic.mgc')
+        path = os.path.join(sys.exec_prefix, 'misc/magic.mgc')
         if os.path.exists(path):
             magic_file = path
 
