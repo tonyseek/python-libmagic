@@ -1,4 +1,6 @@
-include tests/*
 include vendor/file-5.17.tar.gz
 include vendor/file-locale-5.17.patch
 include vendor/zlib-1.2.8.tar.gz
+include misc/magic.mgc
+include tests/*.py
+include tests/files/*
