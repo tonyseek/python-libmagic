@@ -65,28 +65,27 @@ class TestHamish(unittest.TestCase):
             self.assertEqual(type, 'ASCII text')
 
     def test_mime_encodings(self):
-        m = hamish.open(mime_encoding=True)
+        with hamish.open(mime_encoding=True) as m:
+            with open(os.path.join(PATH, 'files', 'text.txt')) as f:
+                b = f.read()
+                type = m.from_buffer(b)
+                self.assertEqual(type, 'us-ascii')
 
-        with open(os.path.join(PATH, 'files', 'text.txt')) as f:
-            b = f.read()
-            type = m.from_buffer(b)
-            self.assertEqual(type, 'us-ascii')
-
-        with open(os.path.join(PATH, 'files', 'text-iso8859-1.txt')) as f:
-            b = f.read()
-            type = m.from_buffer(b)
-            self.assertEqual(type, 'iso-8859-1')
+            with open(os.path.join(PATH, 'files', 'text-iso8859-1.txt')) as f:
+                b = f.read()
+                type = m.from_buffer(b)
+                self.assertEqual(type, 'iso-8859-1')
 
     def test_keep_going(self):
         path = os.path.join(PATH, 'files', 'keep-going.jpg')
 
-        m = hamish.open(mime=True)
-        type = m.from_file(path)
+        with hamish.open(mime=True) as m:
+            type = m.from_file(path)
         # FIXME: should be application/octet-stream ?
         self.assertEqual(type, 'image/jpeg')
 
-        m = hamish.open(mime=True, keep_going=True)
-        type = m.from_file(path)
+        with hamish.open(mime=True, keep_going=True) as m:
+            type = m.from_file(path)
         self.assertEqual(type, 'image/jpeg')
 
 
