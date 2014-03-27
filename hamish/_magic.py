@@ -98,7 +98,7 @@ class Magic(object):
         is set. A call to errno() will return the numeric error code.
         """
         c_buf = ffi.new('char []', buf)
-        c_buf_len = len(c_buf)
+        c_buf_len = ffi.cast('size_t', len(c_buf) - 1)
         r = cmagic.magic_buffer(self._c_magic_t, c_buf, c_buf_len)
         if r:
             return ffi.string(r)
